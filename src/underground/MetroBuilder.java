@@ -9,9 +9,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * <code>MetroBuilder</code> is a class which 
+ * {@code MetroBuilder} is a class which creates {@link Metro} objects.
  * 
+ * <p>
+ * The {@link Metro} produced by the {@code MetroBuilder} is equivelant to the
+ * builder.
+ * </p>
  * 
+ * <p>
+ * {@code MetroBuilder} is responsible for collecting information about a
+ * {@link Metro} object, before producing the {@link Model} represented by the
+ * {@code MetroBuilder}. The {@code MetroBuilder} also will pre-compute the
+ * {@link Line} objects that will exist within thin the {@link Metro}, such as
+ * the lines which are directly connected to a specific {@link Line}.
+ * </p>
  * 
  * @author 	159014260 John Berg
  * @since 	13/11/2017
@@ -78,35 +89,6 @@ public class MetroBuilder
 				lineInfo.get(lineName).stream()
 				.map(Station::new)
 				.collect(Collectors.toList())));
-	}
-	/**
-	 * Create a {@link Set} of the {@link Station} objects which have been
-	 * defined.
-	 * 
-	 * <p>
-	 * The {@link Set} returned by this method is unmodifiable, and does not
-	 * allow insertion or removal.
-	 * </p>
-	 * 
-	 * <p>
-	 * <b>For internal use only!</b>
-	 * </p>
-	 * 
-	 * @return The {@link Set} of {@link Station} objects which are represented
-	 * 			inside <code>this</code>.
-	 */
-	private Set<Station> createStations()
-	{
-		final Set<Station> stations = new LinkedHashSet<>();
-		/*
-		 * Create Station objects using the names of the stations, then add
-		 * the newly created Station objects to the stations Set. 
-		 */
-		for(Set<String> stationNames: lineInfo.values())
-			stationNames.stream()
-			.map(Station::new)
-			.forEach(stations::add);
-		return Collections.unmodifiableSet(stations);
 	}
 	/**
 	 * Create the {@link Map} of {@link String} to {@link Line} objects, where
@@ -252,6 +234,6 @@ public class MetroBuilder
 	 */
 	public final Metro build()
 	{
-		return new Metro(createStations(), createLines());
+		return new Metro(createLines());
 	}
 }
