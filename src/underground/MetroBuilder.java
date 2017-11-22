@@ -3,12 +3,10 @@ package underground;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 
 /**
  * <code>MetroBuilder</code> is a class which 
@@ -32,7 +30,6 @@ public class MetroBuilder
 	private static final String LINE_NAME_NOT_NULL =
 			"A line name cannot be null";
 	/**
-	 * 
 	 * The {@link String} representing an message for when a <code>null</code>
 	 * value is being added to a <code>MetroBuilder</code> which represents a
 	 * station name.
@@ -62,6 +59,11 @@ public class MetroBuilder
 	 * <code>this</code>
 	 * 
 	 * <p>
+	 * The resulting {@link Set} is unmodifiable, and does not allow for
+	 * insertion or removal.
+	 * </p>
+	 * 
+	 * <p>
 	 * <b>For internal use only!</b>
 	 * </p>
 	 * 
@@ -72,10 +74,10 @@ public class MetroBuilder
 	 */
 	private Set<Station> getStationsOf(final String lineName)
 	{
-		return lineInfo.get(lineName)
-				.stream()
+		return Collections.unmodifiableSet(new LinkedHashSet<>(
+				lineInfo.get(lineName).stream()
 				.map(Station::new)
-				.collect(Collectors.toSet());
+				.collect(Collectors.toList())));
 	}
 	/**
 	 * Create a {@link Set} of the {@link Station} objects which have been
@@ -107,36 +109,49 @@ public class MetroBuilder
 		return Collections.unmodifiableSet(stations);
 	}
 	/**
+	 * Create the {@link Map} of {@link String} to {@link Line} objects, where
+	 * the {@link String} is the key which is the name of the corresponding
+	 * value {@link Line}. 
 	 * 
+	 * <p>
+	 * The output {@link Map} is unmodifiable, and does not allow for insertion
+	 * or removal.
+	 * </p>
 	 * 
+	 * <p>
+	 * <b>For internal use only!</b>
+	 * </p>
 	 * 
 	 * @return The {@link Map} which contains the {@link String} and the
 	 * 			corresponding {@link Line} object.
 	 */
 	private Map<String, Line> createLines()
 	{
-		//
-		final Map<String, Set<String>> ajecentInfo = new HashMap<>();
-		final Map<String, Line> lines = new HashMap<>();
+		final Map<String, Line> lines = new HashMap<>(lineInfo.size());
 		
 		//Go through all the entries in lineInfo
 		for(Map.Entry<String, Set<String>> e: lineInfo.entrySet())
 		{
-			final Set<Station> stations = getStationsOf(e.getKey());
+			final String lineName = e.getKey();
+			final Set<Station> stations = getStationsOf(lineName);
 			lines.put(
-					e.getKey(),
+					lineName,
 					new Line(
-							e.getKey(),
-							Collections.unmodifiableSet(stations),
-							findAdjecentLinesTo(e.getKey())));
+							lineName,
+							stations,
+							findAdjecentLinesTo(lineName)));
 		} //for
 		return Collections.unmodifiableMap(lines);
 	}
 	/**
+	 * Find the names of the {@link Line} objects which exist adjacent to
+	 * a specified {@link Line}.
 	 * 
 	 * @param lineName The {@link String} representation of a {@link Line}
 	 * 			object to find the adjacent {@link Line} objects.
-	 * @return
+	 * @return The {@link Set} of {@link String} objects which represent the
+	 * 			names of the {@link Line} objects which are directly connected
+	 * 			to the {@link Line} represented by <code>lineName</code>.
 	 */
 	private Set<String> findAdjecentLinesTo(final String lineName)
 	{
@@ -160,7 +175,7 @@ public class MetroBuilder
 		return Collections.unmodifiableSet(adjacentLines);
 	}
 	/**
-	 * Add a new line to the Metro.
+	 * Add a new line to <code>this</code> {@code MetroBuilder}.
 	 * 
 	 * <p>
 	 * Adding new line will be created if the name of the line to be created
@@ -178,7 +193,6 @@ public class MetroBuilder
 		//Can't add a null value.
 		if(lineName == null)
 			throw new NullPointerException(LINE_NAME_NOT_NULL);
-		
 		//Check if the line exists before creating it.
 		if(!lineInfo.containsKey(lineName))
 			lineInfo.put(lineName, new LinkedHashSet<>());
@@ -186,7 +200,11 @@ public class MetroBuilder
 	/**
 	 * Add a {@link String} representing a {@link Station} to a {@link Line}
 	 * 
-	 * 
+	 * <p>
+	 * If the {@link String} which represents the {@link Line} that the
+	 * {@link Station} should be added to, does not exist, then the
+	 * {@link Line} will be created before adding the {@link Station}.
+	 * </p>
 	 * 
 	 * @param stationName The {@link String} representation to station to be
 	 * 			added.
@@ -224,7 +242,8 @@ public class MetroBuilder
 	 * 
 	 * <p>
 	 * The {@link Station} objects contained in the output {@link Metro} object
-	 * is created from the {@link String} ...
+	 * is created from the {@link String} representations of {@link Line} and
+	 * {@link Station}.
 	 * </p>
 	 * 
 	 * @return The {@link Metro} which <code>this</code> represents.
