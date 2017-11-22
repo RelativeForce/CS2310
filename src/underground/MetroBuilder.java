@@ -3,6 +3,8 @@ package underground;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -93,7 +95,7 @@ public class MetroBuilder
 	 */
 	private Set<Station> createStations()
 	{
-		final Set<Station> stations = new HashSet<>();
+		final Set<Station> stations = new LinkedHashSet<>();
 		/*
 		 * Create Station objects using the names of the stations, then add
 		 * the newly created Station objects to the stations Set. 
@@ -179,7 +181,7 @@ public class MetroBuilder
 		
 		//Check if the line exists before creating it.
 		if(!lineInfo.containsKey(lineName))
-			lineInfo.put(lineName, new HashSet<>());
+			lineInfo.put(lineName, new LinkedHashSet<>());
 	}
 	/**
 	 * Add a {@link String} representing a {@link Station} to a {@link Line}
