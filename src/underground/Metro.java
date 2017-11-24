@@ -30,5 +30,9 @@ public class Metro {
 		this.lines = lines;
 		this.stationLineLookUp = Collections.unmodifiableMap(stationToLine);
 		this.allStations = Collections.unmodifiableSet(stations);
+		
+	}
+	public void listStations() {
+		allStations.forEach(station -> System.out.println(station.getName()));
 	}
 }
