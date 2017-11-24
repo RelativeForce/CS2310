@@ -12,7 +12,7 @@ import java.util.Set;
  * to it.
  * 
  * @author 	159014260 John Berg
- * @author 	nnnnnnnnn Joshua Eddy
+ * @author 	159029448 Joshua Eddy
  * @since 	13/11/2017
  * @version 21/20/2017
  * @see Station
