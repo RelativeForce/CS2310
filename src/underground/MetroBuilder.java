@@ -131,30 +131,40 @@ public class MetroBuilder
 	 * 
 	 * @param lineName The {@link String} representation of a {@link Line}
 	 * 			object to find the adjacent {@link Line} objects.
-	 * @return The {@link Set} of {@link String} objects which represent the
+	 * @return The {@link Map} of {@link String} objects which represent the
 	 * 			names of the {@link Line} objects which are directly connected
-	 * 			to the {@link Line} represented by <code>lineName</code>.
+	 * 			to the {@link Line} represented by <code>lineName</code>. The
+	 * 			values of the {@link Map} is the {@link Station} objects which
+	 * 			exist on both the {@link Line} represented by
+	 * 			<code>lineName</code> and the adjacent {@link Line}.
 	 */
-	private Set<String> findAdjecentLinesTo(final String lineName)
+	private Map<String, Set<Station>> findAdjecentLinesTo(final String lineName)
 	{
 		/*
 		 * Maintain a list of the adjacent lines, and the stations which are
 		 * contained in lineName.
 		 */
-		final Set<String> adjacentLines = new HashSet<>();
+		final Map<String, Set<Station>> adjacentLines = new HashMap<>();
 		final Set<String> stations = lineInfo.get(lineName);
 		
 		//Search all the lines for lines directly connected to lineName.
 		for(final Map.Entry<String, Set<String>> e: lineInfo.entrySet())
+		{
+			//Get all the stations which intersect between two lines.
+			final Set<Station> intersectingStations = e.getValue().stream()
+					.filter(stations::contains)
+					.map(Station::new)
+					.collect(Collectors.toSet());
 			/*
-			 * Add the line to the adjacent lines if the lines share at least
-			 * one station in common.
+			 * If the set of intersecting stations is not empty, add the set
+			 * and a the String representing the line to the adjacentLines map.
 			 */
-			if(e.getValue().stream().anyMatch(stations::contains))
-				adjacentLines.add(e.getKey());
+			if(!intersectingStations.isEmpty())
+				adjacentLines.put(e.getKey(), intersectingStations);
+		}
 		//A line cannot be adjacent to itself, remove it.
 		adjacentLines.remove(lineName);
-		return Collections.unmodifiableSet(adjacentLines);
+		return Collections.unmodifiableMap(adjacentLines);
 	}
 	/**
 	 * Add a new line to <code>this</code> {@code MetroBuilder}.
