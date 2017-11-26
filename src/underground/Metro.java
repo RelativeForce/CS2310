@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.Stack;
 
 /**
  * This encapsulates the behaviours of the Metro which is a system of
@@ -81,31 +82,35 @@ public class Metro {
 	 * Finds a path between two specified {@link Station}s and retrieves the
 	 * {@link Queue} of {@link Station}s that denotes the path..
 	 * 
-	 * @param a
+	 * @param start
 	 *            {@link Station}
-	 * @param b
+	 * @param end
 	 *            {@link Station}
 	 * @return {@link Queue} path
 	 */
-	public Queue<Station> findPath(Station a, Station b) {
+	public Queue<Station> findPath(Station start, Station end) {
 
-		// Holds the line that 'a' and 'b' have in common.
-		Line commonLine = null;
-
-		// Check if 'a' and 'b' are on the same line.
-		for (Line line : stationLineLookUp.get(a)) {
-			if (stationLineLookUp.get(b).contains(line)) {
-				commonLine = line;
-			}
-		}
+		Line commonLine = getCommonLine(start, end);
 
 		// If there is a common line get the stations between them.
 		if (commonLine != null) {
-			return getPathOnLine(commonLine, a, b);
+			return getPathOnLine(commonLine, start, end);
 		}
 		// Otherwise
 		else {
-			return searchAdjacent(a, b);
+
+			Stack<Line> linePath = new Stack<>();
+			Set<Line> traversed = new HashSet<>();
+
+			// The first line that will be checked
+			Line startLine = stationLineLookUp.get(start).iterator().next();
+
+			// If there is a line path get the path
+			if (searchAdjacent(linePath, traversed, startLine, end)) {
+				return getPathFromLines(linePath, start, end);
+			}
+
+			return null;
 		}
 	}
 
@@ -141,9 +146,10 @@ public class Metro {
 	 *            {@link Station} b
 	 * @return {@link Queue} path between the two stations.
 	 */
-	private Queue<Station> getPathOnLine(Line line, Station a, Station b) {
+	private LinkedList<Station> getPathOnLine(Line line, Station a, Station b) {
 
-		Queue<Station> path = new LinkedList<>();
+		// The path between the two stations
+		LinkedList<Station> path = new LinkedList<>();
 
 		/**
 		 * As 'a' may be in either direction along the specified line from 'b' the line
@@ -178,38 +184,144 @@ public class Metro {
 		return path;
 	}
 
-	private Queue<Station> searchAdjacent(Station a, Station b) {
+	private Queue<Station> getPathFromLines(Stack<Line> linePath, Station start, Station end) {
 
-		Set<Line> aLines = stationLineLookUp.get(a);
-		Set<Line> bLines = stationLineLookUp.get(b);
+		// Holds the full path from the start station to the end station.
+		LinkedList<Station> fullPath = new LinkedList<>();
 
-		Line aLine = null;
-		Line bLine = null;
+		Station previousStationNode = start;
+		Station nextStationNode = null;
+		Line previousLine = null;
 
-		// If a is not a junction station
-		if (aLines.size() == 1) {
-			aLine = aLines.toArray(new Line[1])[0];
+		// Iterate through each line of the line path from.
+		for (Line line : linePath) {
+
+			// If there is a previous line.
+			if (previousLine != null) {
+
+				// Set the next node as the first intersecting node between the current line and
+				// the previous line.
+				nextStationNode = line.getIntersectingStationsOf(previousLine.getName()).iterator().next();
+
+				// Get the path along the previous line from the previous node to the current
+				// node.
+				LinkedList<Station> path = getPathOnLine(previousLine, previousStationNode, nextStationNode);
+
+				// Remove the station that will start the next leg of the full path along the
+				// current line.
+				previousStationNode = path.removeLast();
+
+				// Add the path to the full path
+				fullPath.addAll(path);
+			}
+
+			// Set the current line as the previous line.
+			previousLine = line;
+
 		}
 
-		// If b is not a junction station
-		if (bLines.size() == 1) {
-			bLine = bLines.toArray(new Line[1])[0];
+		// Add the last leg of the path from the last node to the end station
+		fullPath.addAll(getPathOnLine(previousLine, previousStationNode, end));
+
+		return fullPath;
+	}
+
+	/**
+	 * Retrieves the {@link Line} common to both the specified {@link Station}s.
+	 * 
+	 * @param a
+	 *            {@link Station}
+	 * @param b
+	 *            {@link Station}
+	 * @return Common {@link Line}
+	 */
+	private Line getCommonLine(Station a, Station b) {
+
+		// Check if 'a' and 'b' are on the same line.
+		for (Line line : stationLineLookUp.get(a)) {
+			if (stationLineLookUp.get(b).contains(line)) {
+				return line;
+			}
 		}
-
-		// 'a' and 'b' are junction station
-		if (aLine != null && bLine != null) {
-
-		}
-		// a is a junction station
-		else if (aLine != null) {
-
-		}
-		// b is a junction station
-		else if (bLine != null) {
-
-		}
-
 		return null;
+	}
+
+	/**
+	 * Performs one stage of a recursive depth first search across all the
+	 * {@link Line} in the {@link Metro}.
+	 * 
+	 * @param linePath
+	 *            {@link Stack} path of {@link Line}s that have been.
+	 * @param traversed
+	 *            {@link Set} of {@link Line}s that have been traversed.
+	 * @param current
+	 *            The current {@link Line} being evaluated.
+	 * @param target
+	 *            The target {@link Station} that this DFS is attempting to find.
+	 * @return Whether a path was found or not.
+	 */
+	private boolean searchAdjacent(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
+
+		linePath.push(current);
+		traversed.add(current);
+
+		// If the target station is on the current line.
+		if (current.contains(target)) {
+			return true;
+		}
+
+		final Set<Line> validLines = new HashSet<>();
+
+		final Set<Line> currentLines = getAdjacentLines(current);
+
+		final Set<Line> targetLines = stationLineLookUp.get(target);
+
+		// Check if the line is part of the current
+		for (Line line : currentLines) {
+
+			// If the set of lines connected to the target station then add the line to the
+			// line path as it line
+			if (targetLines.contains(line)) {
+				linePath.push(line);
+				return true;
+			}
+
+			// If the line has not already been traversed add it as a valid child.
+			if (!traversed.contains(line)) {
+				validLines.add(line);
+			}
+
+		}
+
+		// Iterate through each valid child line. Return true if a path is found using a
+		// child line.
+		for (Line line : validLines) {
+			if (searchAdjacent(linePath, traversed, line, target)) {
+				return true;
+			}
+		}
+
+		// If there are no valid child lines then return to parent line.
+		linePath.pop();
+		return false;
+	}
+
+	/**
+	 * Retrieves the {@link Set} of {@link Line}s that connect to the specified
+	 * {@link Line}.
+	 * 
+	 * @param line
+	 *            {@link Line}
+	 * @return {@link Set} of {@link Line}s.
+	 */
+	private Set<Line> getAdjacentLines(Line line) {
+
+		final Set<Line> currentLines = new HashSet<>();
+
+		// Add all the lines to the set of current lines.
+		line.getAdjacentLineNames().forEach(lineName -> currentLines.add(lines.get(lineName)));
+
+		return currentLines;
 	}
 
 }
