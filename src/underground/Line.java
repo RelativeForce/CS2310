@@ -1,9 +1,10 @@
 package underground;
 
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -45,15 +46,18 @@ public class Line {
 	 */
 	private final Set<Station> stations;
 	/**
-	 * The {@link Set} of {@link String} object which represent the names of
-	 * lines which exist adjacent to <code>this</code> {@code Line}.
+	 * The {@link Map} of {@link String} object which represent the names of
+	 * lines which exist adjacent to <code>this</code> {@code Line}. The values
+	 * of {@link Map} is a {@link Set} which contains the {@link Station}
+	 * objects that both <code>this</code> {@link Line} and an adjacent
+	 * {@link Line}.
 	 * 
 	 * <p>
 	 * An adjacent {@code Line} is a line which shares at least one
 	 * {@link Station} object.
 	 * </p>
 	 */
-	private final Set<String> adjacentLines;
+	private final Map<String, Set<Station>> adjacentLines;
 	//=========================================================================
 	//Constructors.
 	/**
@@ -69,15 +73,18 @@ public class Line {
 	 * @param name The name of the {@code Line} to be created.
 	 * @param stations The {@link Set} of {@link Station} objects which exist
 	 * 			on the {@code Line} to be created.
-	 * @param adjasentLines The {@link Set} of {@link String} objects which
+	 * @param adjasentLines The {@link Map} of {@link String} objects which
 	 * 			represents the {@code Line} objects which are directly
-	 * 			connected to the created {@code Line}.
+	 * 			connected to the created {@code Line}. The values of the
+	 * 			{@link Map} are the {@link Station} objects which are are
+	 * 			shared between the created {@code Line} and the adjacent
+	 * 			{@code Line}.
 	 * @see Station
 	 */
 	public Line(
 			String name,
 			Set<Station> stations,
-			Set<String> adjasentLines)
+			Map<String, Set<Station>> adjasentLines)
 	{
 		this.name = name;
 		/*
@@ -86,8 +93,8 @@ public class Line {
 		 */
 		this.stations = Collections.unmodifiableSet(
 				new LinkedHashSet<>(stations));
-		this.adjacentLines = Collections.unmodifiableSet(
-				new HashSet<>(adjasentLines));
+		this.adjacentLines = Collections.unmodifiableMap(
+				new HashMap<>(adjasentLines));
 	}
 	//=========================================================================
 	//Methods.
@@ -102,7 +109,7 @@ public class Line {
 	 * 			<code>false</code>.
 	 */
 	public final boolean contains(final Line line) {
-		return adjacentLines.contains(line.name);
+		return adjacentLines.containsKey(line.name);
 	}
 	/**
 	 * Check if a {@code Station} exists in <code>this</code> {@code Line}.
@@ -148,7 +155,25 @@ public class Line {
 	 */
 	public final Set<String> getAdjacentLineNames()
 	{
-		return adjacentLines;
+		return adjacentLines.keySet();
+	}
+	/**
+	 * Get the {@link Station} objects which exist on <code>this</code>
+	 * {@link Line}, and another specified {@code Line}.
+	 * 
+	 * <p>
+	 * The returned {@link Set} is unmodifiable.
+	 * </p>
+	 * 
+	 * @param lineName The {@link String} representing a {@code Line} to get
+	 * 			the intersecting {@link Station} objects from.
+	 * @return The {@link Set} containing the {@link Station} objects which
+	 * 			exist on both <code>this</code> {@code Line} and the
+	 * 			{@code Line} which is represented by <code>lineName</code>.
+	 */
+	public final Set<Station> getIntersectingStationsOf(final String lineName)
+	{
+		return Collections.unmodifiableSet(adjacentLines.get(lineName));
 	}
 	//=========================================================================
 	//Overriden methods.
