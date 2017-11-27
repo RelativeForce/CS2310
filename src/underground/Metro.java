@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
@@ -17,7 +18,7 @@ import java.util.Stack;
  * @author John_Berg #########
  *
  */
-public class Metro {
+public final class Metro {
 
 	/**
 	 * The {@link Set} of all {@link Station}s in this {@link Metro}.
@@ -88,7 +89,7 @@ public class Metro {
 	 *            {@link Station}
 	 * @return {@link Queue} path
 	 */
-	public Queue<Station> findPath(Station start, Station end) {
+	public final List<Station> findPath(Station start, Station end) {
 
 		Stack<Line> linePath = new Stack<>();
 		Set<Line> traversed = new HashSet<>();
@@ -98,7 +99,7 @@ public class Metro {
 
 		// If there is a line path get the path
 		if (searchAdjacent(linePath, traversed, startLine, end)) {
-			return getPathFromLines(linePath, start, end);
+			return configurePath(linePath, start, end);
 		}
 
 		return null;
@@ -108,7 +109,7 @@ public class Metro {
 	/**
 	 * Lists all the {@link Station}s in the console.
 	 */
-	public void listStations() {
+	public final void listStations() {
 		allStations.forEach(station -> System.out.println(station.getName()));
 	}
 
@@ -117,11 +118,11 @@ public class Metro {
 	 * 
 	 * @return List of all stations
 	 */
-	public String outputAllStations() {
+	public final String outputAllStations() {
 		StringBuilder output = new StringBuilder();
 
 		// For each station add it to the output on a new line.
-		allStations.forEach(s -> output.append(s).append(" \n"));
+		allStations.forEach(s -> output.append(s.getName()).append("\n"));
 		return output.toString();
 	}
 
@@ -137,7 +138,7 @@ public class Metro {
 	 *            {@link Station} b
 	 * @return {@link Queue} path between the two stations.
 	 */
-	private LinkedList<Station> getPathOnLine(Line line, Station a, Station b) {
+	private final LinkedList<Station> getPathOnLine(Line line, Station a, Station b) {
 
 		// The path between the two stations
 		LinkedList<Station> path = new LinkedList<>();
@@ -190,7 +191,21 @@ public class Metro {
 		return path;
 	}
 
-	private Queue<Station> getPathFromLines(Stack<Line> linePath, Station start, Station end) {
+	/**
+	 * Converts the path created by the DFS
+	 * {@link Metro#searchAdjacent(Stack, Set, Line, Station)} into a {@link List}
+	 * of {@link Station}s.
+	 * 
+	 * @param linePath
+	 *            The {@link Stack} of {@link Line}s that are on the path from the
+	 *            start {@link Station} to the end {@link Station}.
+	 * @param start
+	 *            {@link Station}
+	 * @param end
+	 *            {@link Station}
+	 * @return {@link List} of {@link Station}s representing the path.
+	 */
+	private final List<Station> configurePath(Stack<Line> linePath, Station start, Station end) {
 
 		// Holds the full path from the start station to the end station.
 		LinkedList<Station> fullPath = new LinkedList<>();
@@ -246,7 +261,7 @@ public class Metro {
 	 *            The target {@link Station} that this DFS is attempting to find.
 	 * @return Whether a path was found or not.
 	 */
-	private boolean searchAdjacent(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
+	private final boolean searchAdjacent(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
 
 		linePath.push(current);
 		traversed.add(current);
@@ -300,7 +315,7 @@ public class Metro {
 	 *            {@link Line}
 	 * @return {@link Set} of {@link Line}s.
 	 */
-	private Set<Line> getAdjacentLines(Line line) {
+	private final Set<Line> getAdjacentLines(Line line) {
 
 		final Set<Line> currentLines = new HashSet<>();
 
