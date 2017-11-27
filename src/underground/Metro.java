@@ -37,7 +37,7 @@ public class Metro {
 	private final Map<String, Line> lines;
 
 	/**
-	 * Constructs a new {@link Metro}
+	 * Constructs a new {@link Metro}.
 	 * 
 	 * @param lines
 	 *            The {@link Line}s that make up this {@link Metro}. These elements
@@ -90,28 +90,19 @@ public class Metro {
 	 */
 	public Queue<Station> findPath(Station start, Station end) {
 
-		Line commonLine = getCommonLine(start, end);
+		Stack<Line> linePath = new Stack<>();
+		Set<Line> traversed = new HashSet<>();
 
-		// If there is a common line get the stations between them.
-		if (commonLine != null) {
-			return getPathOnLine(commonLine, start, end);
+		// The first line that will be checked
+		Line startLine = stationLineLookUp.get(start).iterator().next();
+
+		// If there is a line path get the path
+		if (searchAdjacent(linePath, traversed, startLine, end)) {
+			return getPathFromLines(linePath, start, end);
 		}
-		// Otherwise
-		else {
 
-			Stack<Line> linePath = new Stack<>();
-			Set<Line> traversed = new HashSet<>();
+		return null;
 
-			// The first line that will be checked
-			Line startLine = stationLineLookUp.get(start).iterator().next();
-
-			// If there is a line path get the path
-			if (searchAdjacent(linePath, traversed, startLine, end)) {
-				return getPathFromLines(linePath, start, end);
-			}
-
-			return null;
-		}
 	}
 
 	/**
@@ -181,6 +172,21 @@ public class Metro {
 			}
 		});
 
+		// If b is at the start of the path. Reverse the path.
+		if (path.peek() == b) {
+
+			Stack<Station> temp = new Stack<>();
+
+			path.forEach(station -> temp.push(station));
+
+			path.clear();
+
+			while (!temp.isEmpty()) {
+				path.add(temp.pop());
+			}
+
+		}
+
 		return path;
 	}
 
@@ -224,26 +230,6 @@ public class Metro {
 		fullPath.addAll(getPathOnLine(previousLine, previousStationNode, end));
 
 		return fullPath;
-	}
-
-	/**
-	 * Retrieves the {@link Line} common to both the specified {@link Station}s.
-	 * 
-	 * @param a
-	 *            {@link Station}
-	 * @param b
-	 *            {@link Station}
-	 * @return Common {@link Line}
-	 */
-	private Line getCommonLine(Station a, Station b) {
-
-		// Check if 'a' and 'b' are on the same line.
-		for (Line line : stationLineLookUp.get(a)) {
-			if (stationLineLookUp.get(b).contains(line)) {
-				return line;
-			}
-		}
-		return null;
 	}
 
 	/**
