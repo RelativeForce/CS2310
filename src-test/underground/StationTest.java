@@ -37,7 +37,7 @@ public class StationTest
 	 * The default name of a {@link Station}.
 	 * <p>
 	 */
-	private static final String STATION_NAME = "Station";
+	private static final String MOCK_STATION_NAME = "Station";
 	/**
 	 * The {@link String} which represent the name of another {@link Station}
 	 * object.
@@ -57,7 +57,7 @@ public class StationTest
 	 * need to reconstruct this {@link Station}.
 	 * </p>
 	 */
-	private static final Station STATION = new Station(STATION_NAME);
+	private static final Station MOCK_STATION = new Station(MOCK_STATION_NAME);
 	//=========================================================================
 	//Tests.
 	/**
@@ -86,7 +86,7 @@ public class StationTest
 	@Test
 	public final void testGetName_Equal()
 	{
-		assertEquals(STATION_NAME, STATION.getName());
+		assertEquals(MOCK_STATION_NAME, MOCK_STATION.getName());
 	}
 	/**
 	 * Test the {@link Station#getName()} method.
@@ -100,7 +100,7 @@ public class StationTest
 	@Test
 	public final void testGetName_NotEqual()
 	{
-		assertNotEquals(OTHER_STATION_NAME, STATION.getName());
+		assertNotEquals(OTHER_STATION_NAME, MOCK_STATION.getName());
 	}
 	/**
 	 * Test the {@link Station#equals(Object)} method.
@@ -114,7 +114,7 @@ public class StationTest
 	@Test
 	public final void testEquals_NullArg()
 	{
-		assertNotEquals(null, STATION);
+		assertNotEquals(null, MOCK_STATION);
 	}
 	/**
 	 * Test the {@link Station#equals(Object)} method.
@@ -128,7 +128,7 @@ public class StationTest
 	@Test
 	public final void testEquals_DifferentType()
 	{
-		assertNotEquals(new Object(), STATION);
+		assertNotEquals(new Object(), MOCK_STATION);
 	}
 	/**
 	 * Test the {@link Station#equals(Object)} method.
@@ -143,7 +143,7 @@ public class StationTest
 	public final void testEquals_NotEqual()
 	{
 		final Station otherStation = new Station(OTHER_STATION_NAME);
-		assertNotEquals(otherStation, STATION);
+		assertNotEquals(otherStation, MOCK_STATION);
 	}
 	/**
 	 * Test the {@link Station#equals(Object)} method.
@@ -157,8 +157,8 @@ public class StationTest
 	@Test
 	public final void testEquals_Equal()
 	{
-		final Station otherStation = new Station(STATION_NAME);
-		assertEquals(otherStation, STATION);
+		final Station otherStation = new Station(MOCK_STATION_NAME);
+		assertEquals(otherStation, MOCK_STATION);
 	}
 	/**
 	 * Test the {@link Station#hashCode()} method.
@@ -171,7 +171,7 @@ public class StationTest
 	@Test
 	public final void testHashCode_NotEqualString()
 	{
-		assertNotEquals(OTHER_STATION_NAME.hashCode(), STATION.hashCode());
+		assertNotEquals(OTHER_STATION_NAME.hashCode(), MOCK_STATION.hashCode());
 	}
 	/**
 	 * Test the {@link Station#hashCode()} method.
@@ -184,7 +184,7 @@ public class StationTest
 	@Test
 	public final void testHashCode_EqualString()
 	{
-		assertEquals(STATION_NAME.hashCode(), STATION.hashCode());
+		assertEquals(MOCK_STATION_NAME.hashCode(), MOCK_STATION.hashCode());
 	}
 	/**
 	 * Test the {@link Station#hashCode()} method.
@@ -210,7 +210,7 @@ public class StationTest
 	public final void testHashCode_NotEqual()
 	{
 		final Station OtherStation = new Station(OTHER_STATION_NAME);
-		assertNotEquals(OtherStation.hashCode(), STATION.hashCode());
+		assertNotEquals(OtherStation.hashCode(), MOCK_STATION.hashCode());
 	}
 	/**
 	 * Test the {@link Station#hashCode()} method.
@@ -224,8 +224,8 @@ public class StationTest
 	@Test
 	public final void testHashCode_Equal()
 	{
-		final Station otherStation = new Station(STATION_NAME);
-		assertEquals(otherStation.hashCode(), STATION.hashCode());
+		final Station otherStation = new Station(MOCK_STATION_NAME);
+		assertEquals(otherStation.hashCode(), MOCK_STATION.hashCode());
 	}
 	/**
 	 * Test the {@link Station#toString()} method.
@@ -239,6 +239,6 @@ public class StationTest
 	@Test
 	public final void testToString()
 	{
-		assertEquals(STATION_NAME, STATION.toString());
+		assertEquals(MOCK_STATION_NAME, MOCK_STATION.toString());
 	}
 }
