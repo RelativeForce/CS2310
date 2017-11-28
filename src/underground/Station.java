@@ -10,12 +10,20 @@ package underground;
  * underground system.
  * </p>
  * 
- * @author 	nnnnnnnnn Joshua Eddy 
+ * @author 	159029448 Joshua Eddy 
  * @author 	159014260 John Berg
  * @since 	13/11/2017
- * @version 22/11/2017
+ * @version 28/11/2017
  */
-public class Station {
+public class Station
+{
+	//=========================================================================
+	//Static fields.
+	/**
+	 * The {@link String} containing the message used when attempting to
+	 * construct a {@code Station} using a <code>null</code> value.
+ 	 */
+	private final String NULL_STATION_NAME = "The station name was null";
 	//=========================================================================
 	//Fields.
 	/**
@@ -30,8 +38,14 @@ public class Station {
 	 * 
 	 * @param name The {@link String} representing the name of the created
 	 * 			{@code Station}.
+	 * @throws NullPointerException If <code>name</code> is <code>null</code>.
 	 */
-	public Station(final String name) {
+	public Station(final String name)
+			throws
+			NullPointerException
+	{
+		if(name == null)
+			throw new NullPointerException(NULL_STATION_NAME);
 		this.name = name;
 	}
 	//=========================================================================
@@ -41,7 +55,8 @@ public class Station {
 	 * 
 	 * @return The name of <code>this</code> {@code Station}.
 	 */
-	public String getName() {
+	public String getName()
+	{
 		return name;
 	}
 	//=========================================================================
@@ -62,12 +77,12 @@ public class Station {
 	 * 			and <code>o</code> equal.
 	 */
 	@Override
-	public boolean equals(Object obj) {
-
-		if (obj instanceof Station) {
+	public boolean equals(Object obj)
+	{
+		if (obj instanceof Station)
+		{
 			return ((Station) obj).name.equals(this.name);
 		}
-
 		return false;
 	}
 	/**
@@ -82,7 +97,8 @@ public class Station {
 	 * @return The hash code of <code>this</code> {@code Station}.
 	 */
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		return name.hashCode();
 	}
 	/**
