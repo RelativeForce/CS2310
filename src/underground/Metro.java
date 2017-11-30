@@ -127,6 +127,42 @@ public final class Metro {
 	}
 
 	/**
+	 * Retrieves the {@link Set} of {@link Line}s that connect to the specified
+	 * {@link Line}.
+	 * 
+	 * @param line
+	 *            {@link Line}
+	 * @return {@link Set} of {@link Line}s.
+	 */
+	public final Set<Line> getAdjacentLines(String line) {
+
+		final Set<Line> currentLines = new HashSet<>();
+
+		// Add all the lines to the set of current lines.
+		lines.get(line).getAdjacentLineNames().forEach(lineName -> currentLines.add(lines.get(lineName)));
+
+		return currentLines;
+	}
+	
+	/**
+	 * Retrieves the {@link Set} of {@link Line}s that connect to the specified
+	 * {@link Line}.
+	 * 
+	 * @param line
+	 *            {@link Line}
+	 * @return {@link Set} of {@link Line}s.
+	 */
+	public final Set<Line> getAdjacentLines(Line line) {
+
+		final Set<Line> currentLines = new HashSet<>();
+
+		// Add all the lines to the set of current lines.
+		line.getAdjacentLineNames().forEach(lineName -> currentLines.add(lines.get(lineName)));
+
+		return currentLines;
+	}
+	
+	/**
 	 * Retrieves the {@link Station}s along one {@link Line} until the common
 	 * {@link Station} is reached.
 	 * 
@@ -305,24 +341,6 @@ public final class Metro {
 		// If there are no valid child lines then return to parent line.
 		linePath.pop();
 		return false;
-	}
-
-	/**
-	 * Retrieves the {@link Set} of {@link Line}s that connect to the specified
-	 * {@link Line}.
-	 * 
-	 * @param line
-	 *            {@link Line}
-	 * @return {@link Set} of {@link Line}s.
-	 */
-	private final Set<Line> getAdjacentLines(Line line) {
-
-		final Set<Line> currentLines = new HashSet<>();
-
-		// Add all the lines to the set of current lines.
-		line.getAdjacentLineNames().forEach(lineName -> currentLines.add(lines.get(lineName)));
-
-		return currentLines;
 	}
 
 }
