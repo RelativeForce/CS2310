@@ -40,8 +40,12 @@ public class RequestHandler implements Controller{
 	 * 			User inputted string naming the {@link Line} they want returned.
 	 */
 	public String listStationsInLine(String line) {
+		StringBuilder sb = new StringBuilder();
+		metro.listStationsOnLine(line).forEach(linename ->sb.append(linename.getName()).append("\n"));
 		
-		return null;
+		return sb.toString();
+		
+		
 	}
 
 	/**
@@ -53,8 +57,10 @@ public class RequestHandler implements Controller{
 	 * 			connection information returned for.
 	 */
 	public String listAllDirectlyConnectedLines(String line) {
+		StringBuilder sb = new StringBuilder();
+		metro.getAdjacentLines(line).forEach(linename ->sb.append(linename.getName()).append("\n"));
 		
-		return null;
+		return sb.toString();
 	}
 
 	/**
