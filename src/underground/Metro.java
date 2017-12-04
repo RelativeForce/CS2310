@@ -108,10 +108,15 @@ public final class Metro {
 	}
 
 	/**
-	 * Lists all the {@link Station}s in the console.
+	 * Lists all the {@link Station}s on a {@link Line}.
 	 */
-	public final void listStations() {
-		allStations.forEach(station -> System.out.println(station.getName()));
+	public final List<Station> listStationsOnLine(String lineName) {
+
+		List<Station> stations = new LinkedList<>();
+
+		// For each station add it to the output on a new line.
+		lines.get(lineName).getStations().forEach(s -> stations.add(s));
+		return stations;
 	}
 
 	/**
@@ -144,7 +149,7 @@ public final class Metro {
 
 		return currentLines;
 	}
-	
+
 	/**
 	 * Retrieves the {@link Set} of {@link Line}s that connect to the specified
 	 * {@link Line}.
@@ -162,7 +167,7 @@ public final class Metro {
 
 		return currentLines;
 	}
-	
+
 	/**
 	 * Retrieves the {@link Station}s along one {@link Line} until the common
 	 * {@link Station} is reached.
