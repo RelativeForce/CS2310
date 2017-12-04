@@ -97,9 +97,9 @@ public final class Metro {
 			throw new NullPointerException("Start cannot be null.");
 		} else if (end == null) {
 			throw new NullPointerException("End cannot be null.");
-		} else if (stationLineLookUp.get(start) == null) {
+		} else if (!allStations.contains(start)) {
 			throw new NullPointerException(start.getName() + " does not exist in this Metro.");
-		} else if (stationLineLookUp.get(end) == null) {
+		} else if (!allStations.contains(end)) {
 			throw new NullPointerException(end.getName() + " does not exist in this Metro.");
 		}
 
