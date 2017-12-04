@@ -92,7 +92,21 @@ public final class Metro {
 	 */
 	public final List<Station> findPath(Station start, Station end) {
 
+		// Check parameters
+		if (start == null) {
+			throw new NullPointerException("Start cannot be null.");
+		} else if (end == null) {
+			throw new NullPointerException("End cannot be null.");
+		} else if (stationLineLookUp.get(start) == null) {
+			throw new NullPointerException(start.getName() + " does not exist in this Metro.");
+		} else if (stationLineLookUp.get(end) == null) {
+			throw new NullPointerException(end.getName() + " does not exist in this Metro.");
+		}
+
+		// Holds the lines that the path from the start to end stations traverses
 		Stack<Line> linePath = new Stack<>();
+
+		// THe set of lines that have been traversed by the path
 		Set<Line> traversed = new HashSet<>();
 
 		// The first line that will be checked
@@ -100,6 +114,8 @@ public final class Metro {
 
 		// If there is a line path get the path
 		if (searchAdjacent(linePath, traversed, startLine, end)) {
+
+			// Return the path
 			return configurePath(linePath, start, end);
 		}
 
@@ -112,10 +128,17 @@ public final class Metro {
 	 */
 	public final List<Station> listStationsOnLine(String lineName) {
 
-		List<Station> stations = new LinkedList<>();
+		final List<Station> stations = new LinkedList<>();
+
+		Line line = lines.get(lineName);
+
+		// Check parameters
+		if (line == null) {
+			throw new NullPointerException(lineName + " does not exist in this Metro.");
+		}
 
 		// For each station add it to the output on a new line.
-		lines.get(lineName).getStations().forEach(s -> stations.add(s));
+		line.getStations().forEach(s -> stations.add(s));
 		return stations;
 	}
 
@@ -140,12 +163,19 @@ public final class Metro {
 	 *            {@link Line}
 	 * @return {@link Set} of {@link Line}s.
 	 */
-	public final Set<Line> getAdjacentLines(String line) {
+	public final Set<Line> getAdjacentLines(String lineName) {
 
 		final Set<Line> currentLines = new HashSet<>();
 
+		Line line = lines.get(lineName);
+
+		// Check parameters
+		if (line == null) {
+			throw new NullPointerException(lineName + " does not exist in this Metro.");
+		}
+
 		// Add all the lines to the set of current lines.
-		lines.get(line).getAdjacentLineNames().forEach(lineName -> currentLines.add(lines.get(lineName)));
+		line.getAdjacentLineNames().forEach(current -> currentLines.add(lines.get(current)));
 
 		return currentLines;
 	}
