@@ -132,50 +132,53 @@ public class LineTest
 	@Test(expected = NullPointerException.class)
 	public final void testContains_StationNullArg()
 	{
+		final Station station = null;
+		MOCK_LINE_A.contains(station);
 	}
 	@Test
 	public final void testContains_StationsNotExisting()
 	{
+		assertFalse(MOCK_LINE_A.contains(STATION_C));
 	}
 	@Test
 	public final void testContains_StationExists()
 	{
-		
+		assertFalse(MOCK_LINE_A.contains(STATION_A));
 	}
 	@Test
 	public final void testGetName_NotEqualString()
 	{
-		
+		assertNotEquals(NON_EXISTING_LINE_NAME, MOCK_LINE_A.getName());
 	}
 	@Test
 	public final void testGetName_EqualString()
 	{
-		
+		assertEquals(MOCK_LINE_NAME_A, MOCK_LINE_A.getName());
 	}
 	@Test
 	public final void testGetStations_Empty()
 	{
-		
+		assertTrue(NON_EXISTING_LINE.getStations().isEmpty());
 	}
 	@Test
 	public final void testGetStations_NotEmpty()
 	{
-		
+		assertFalse(MOCK_LINE_A.getStations().isEmpty());
 	}
 	@Test
 	public final void testGetStations_Contains()
 	{
-		
+		assertFalse(MOCK_LINE_A.getStations().contains(STATION_A));
 	}
 	@Test
 	public final void testGetAdjacentLines_Empty()
 	{
-		
+		assertTrue(NON_EXISTING_LINE.getAdjacentLineNames().isEmpty());
 	}
 	@Test
 	public final void testGetAdjacent_NotEmpty()
 	{
-		
+		assertTrue(!MOCK_LINE_A.getAdjacentLineNames().isEmpty());
 	}
 	@Test
 	public final void testGetAdjacent_Contains()
@@ -185,7 +188,7 @@ public class LineTest
 	@Test(expected = NullPointerException.class)
 	public final void testGetIntersectionOf_NullArg()
 	{
-		
+		MOCK_LINE_A.getIntersectingStationsOf(null);
 	}
 	@Test
 	public final void testGetIntersectionOf_NotExisting()
