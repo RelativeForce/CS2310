@@ -33,7 +33,7 @@ class Test_Metro {
 	 * @throws Exception
 	 */
 	@BeforeEach
-	void setUp() throws Exception {
+	public void setUp() throws Exception {
 		data = new Sample();
 	}
 
@@ -42,7 +42,7 @@ class Test_Metro {
 	 * the {@link Metro} is constructed with the {@link SampleData}.
 	 */
 	@Test
-	void test_outputAllStations() {
+	public void test_outputAllStations() {
 
 		String output = data.metro.outputAllStations();
 
@@ -63,15 +63,28 @@ class Test_Metro {
 		trueOutput.append("\n");
 		trueOutput.append(data.h.getName());
 		trueOutput.append("\n");
-
+		trueOutput.append(data.j.getName());
+		trueOutput.append("\n");
+		trueOutput.append(data.k.getName());
+		trueOutput.append("\n");
+		trueOutput.append(data.l.getName());
+		trueOutput.append("\n");
+		trueOutput.append(data.m.getName());
+		trueOutput.append("\n");
+		trueOutput.append(data.n.getName());
+		trueOutput.append("\n");
+		
 		assertTrue(trueOutput.toString().equals(output));
 
 	}
 
+	/**
+	 * Tests the path finding algorithm in the {@link Metro}.
+	 */
 	@Test
-	void test_Pathing() {
+	public void test_Pathing() {
 
-		List<Station> path = data.metro.findPath(data.h, data.b);
+		List<Station> path = data.metro.findPath(data.a, data.m);
 		path.forEach(station -> System.out.println(station));
 	}
 
