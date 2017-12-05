@@ -90,7 +90,7 @@ public final class Metro {
 	 *            {@link Station}
 	 * @return {@link Queue} path
 	 */
-	public final List<Station> findPath(Station start, Station end) {
+	public List<Station> findPath(Station start, Station end) {
 
 		// Check parameters
 		if (start == null) {
@@ -126,7 +126,7 @@ public final class Metro {
 	/**
 	 * Lists all the {@link Station}s on a {@link Line}.
 	 */
-	public final List<Station> listStationsOnLine(String lineName) {
+	public List<Station> listStationsOnLine(String lineName) {
 
 		final List<Station> stations = new LinkedList<>();
 
@@ -147,7 +147,7 @@ public final class Metro {
 	 * 
 	 * @return List of all stations
 	 */
-	public final String outputAllStations() {
+	public String outputAllStations() {
 		StringBuilder output = new StringBuilder();
 
 		// For each station add it to the output on a new line.
@@ -163,7 +163,7 @@ public final class Metro {
 	 *            {@link Line}
 	 * @return {@link Set} of {@link Line}s.
 	 */
-	public final Set<Line> getAdjacentLines(String lineName) {
+	public Set<Line> getAdjacentLines(String lineName) {
 
 		final Set<Line> currentLines = new HashSet<>();
 
@@ -188,7 +188,7 @@ public final class Metro {
 	 *            {@link Line}
 	 * @return {@link Set} of {@link Line}s.
 	 */
-	public final Set<Line> getAdjacentLines(Line line) {
+	public Set<Line> getAdjacentLines(Line line) {
 
 		final Set<Line> currentLines = new HashSet<>();
 
@@ -210,25 +210,30 @@ public final class Metro {
 	 *            {@link Station} b
 	 * @return {@link Queue} path between the two stations.
 	 */
-	private final LinkedList<Station> getPathOnLine(Line line, Station a, Station b) {
+	private LinkedList<Station> getPathOnLine(Line line, Station a, Station b) {
 
 		// The path between the two stations
 		LinkedList<Station> path = new LinkedList<>();
 
+		// Whether the path contains 'a' already
+		boolean containsA = false;
+
+		// Whether the path contains 'a' already
+		boolean containsB = false;
+
 		/**
-		 * As 'a' may be in either direction along the specified line from 'b' the line
-		 * must be iterated in both directions.
+		 * Adds all the stations between 'a' and 'b' to the path
 		 */
-		line.getStations().forEach(station -> {
+		for (Station station : line.getStations()) {
 
-			// Whether the path contains 'a' already
-			final boolean containsA = path.contains(a);
+			// Whether the current station is 'a'
+			final boolean isA = station.equals(a);
 
-			// Whether the path contains 'a' already
-			final boolean containsB = path.contains(b);
+			// Whether the current station is 'b'
+			final boolean isB = station.equals(b);
 
 			// Whether the current station is 'a' or 'b'
-			final boolean isAorB = station.equals(a) || station.equals(b);
+			final boolean isAorB = isA || isB;
 
 			// Whether the path contains 'a' OR 'b'
 			final boolean containsAorB = containsA || containsB;
@@ -236,28 +241,31 @@ public final class Metro {
 			// Whether the path contains 'a' AND 'b'
 			final boolean containsAandB = containsA && containsB;
 
+			// If both stations are in the path stop iterating over 
+			if(containsAandB) {
+				break;
+			}
+			
 			/*
 			 * If the current station is 'a' or 'b' OR the the path contains 'a' or 'b' but
 			 * NOT both, add the current station to the path.
 			 */
-			if ((containsAorB && !containsAandB) || isAorB) {
+			if (containsAorB || isAorB) {
+
+				// Set the contains variables if the current station is A or B
+				if (isA) {
+					containsA = true;
+				} else if (isB) {
+					containsB = true;
+				}
 				path.add(station);
 			}
-		});
+
+		}
 
 		// If b is at the start of the path. Reverse the path.
-		if (path.peek() == b) {
-
-			Stack<Station> temp = new Stack<>();
-
-			path.forEach(station -> temp.push(station));
-
-			path.clear();
-
-			while (!temp.isEmpty()) {
-				path.add(temp.pop());
-			}
-
+		if (path.peek().equals(b)) {
+			return reversePath(path);
 		}
 
 		return path;
@@ -277,7 +285,7 @@ public final class Metro {
 	 *            {@link Station}
 	 * @return {@link List} of {@link Station}s representing the path.
 	 */
-	private final List<Station> configurePath(Stack<Line> linePath, Station start, Station end) {
+	private List<Station> configurePath(Stack<Line> linePath, Station start, Station end) {
 
 		// Holds the full path from the start station to the end station.
 		LinkedList<Station> fullPath = new LinkedList<>();
@@ -333,7 +341,7 @@ public final class Metro {
 	 *            The target {@link Station} that this DFS is attempting to find.
 	 * @return Whether a path was found or not.
 	 */
-	private final boolean searchAdjacent(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
+	private boolean searchAdjacent(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
 
 		linePath.push(current);
 		traversed.add(current);
@@ -379,4 +387,27 @@ public final class Metro {
 		return false;
 	}
 
+	/**
+	 * Reverses the specified {@link LinkedList} of {@link Station}s.
+	 * 
+	 * @param path
+	 *            {@link LinkedList} of {@link Station}s
+	 * @return reversed {@link LinkedList} of {@link Station}s
+	 */
+	private LinkedList<Station> reversePath(LinkedList<Station> path) {
+
+		LinkedList<Station> reversePath = new LinkedList<>();
+
+		/*
+		 * Remove the last element from the path and add it to the back of the reversed
+		 * path
+		 */
+		while (!path.isEmpty()) {
+			reversePath.add(path.removeLast());
+		}
+
+		return reversePath;
+	}
+	
+	
 }
