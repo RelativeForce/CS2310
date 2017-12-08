@@ -10,8 +10,6 @@ public class Main {
 		
 		
 		final MetroBuilder builder = new MetroBuilder();
-		
-		
 		final String[] strs = TextFileReader.scanFile("Resources", "MTRsystem_partial.csv");
 		for(final String s: strs)
 		{
