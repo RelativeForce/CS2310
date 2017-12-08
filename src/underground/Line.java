@@ -33,13 +33,28 @@ public class Line {
 	 * between two {@link Station} objects.
 	 */
 	private static final String STATION_SEPARATOR  = " <-> ";
+	/**
+	 * The {@link String} which contains the error message for when creating
+	 * a {@code Line} with an {@link Set#isEmpty()} {@link Set} of
+	 * {@link Station} objects.
+	 */
+	private static final String NO_STATION_MESSAGE =
+			"A line must have at least one station";
 	//=========================================================================
 	//Fields.
 	/**
 	 * The {@link String} representing the name of <code>this</code>
 	 * {@code Line}.
 	 */
-	private String name;
+	private final String name;
+	/**
+	 * The {@link Station} which is the first termini of the {@code Line}.
+	 */
+	private final Station firstTermini;
+	/**
+	 * The {@link Station} which is the first termini of the {@code Line}.
+	 */
+	private final Station lastTermini;
 	/**
 	 * The {@link Set} of {@link Station} objects which exist within
 	 * <code>this</code> {@code Line}.
@@ -86,6 +101,8 @@ public class Line {
 			Set<Station> stations,
 			Map<String, Set<Station>> adjasentLines)
 	{
+		if(stations.isEmpty())
+			throw new IllegalArgumentException(NO_STATION_MESSAGE);
 		this.name = name;
 		/*
 		 * The sets containing information about the Line cannot be modified,
@@ -95,6 +112,13 @@ public class Line {
 				new LinkedHashSet<>(stations));
 		this.adjacentLines = Collections.unmodifiableMap(
 				new HashMap<>(adjasentLines));
+		final Station[] stationArray = stations.toArray(
+				new Station[stations.size()]);
+		
+		//Set the first and last termini.
+		firstTermini = stationArray[0];
+		lastTermini = stationArray[stationArray.length - 1];
+
 	}
 	//=========================================================================
 	//Methods.
@@ -133,6 +157,24 @@ public class Line {
 	public String getName()
 	{
 		return name;
+	}
+	/**
+	 * Get the first terminal of <code>this</code>.
+	 * 
+	 * @return The {@link Station} representing the first terminal.
+	 */
+	public Station firstTerminal()
+	{
+		return firstTermini;
+	}
+	/**
+	 * Get the last terminal of <code>this</code>.
+	 * 
+	 * @return The {@link Station} representing the last terminal.
+	 */
+	public Station lastTerminal()
+	{
+		return lastTermini;
 	}
 	/**
 	 * Get the {@link Station} objects which exist in <code>this</code>
