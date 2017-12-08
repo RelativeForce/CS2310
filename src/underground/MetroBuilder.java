@@ -108,7 +108,8 @@ public class MetroBuilder
 	 */
 	private Map<String, Line> createLines()
 	{
-		final Map<String, Line> lines = new HashMap<>(lineInfo.size());
+		final Map<String, Line> lines = new HashMap<>(
+				(int) 1.5 * lineInfo.size());
 		
 		//Go through all the entries in lineInfo
 		for(Map.Entry<String, Set<String>> e: lineInfo.entrySet())

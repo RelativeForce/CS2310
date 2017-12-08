@@ -10,9 +10,13 @@ public class Main {
 		
 		
 		final MetroBuilder builder = new MetroBuilder();
-		builder.addLine("A");
-		builder.addStation("a", "A");
+		final String[] strs = TextFileReader.scanFile("Resources", "MTRsystem_partial.csv");
+		for(final String s: strs)
+		{
+			final String[] str = s.split(",");
+			for(int i = 1; i < str.length; ++i)
+				builder.addStation(str[i], str[0]);
+		}
 		final TUI tui = new TUI(new RequestHandler(builder.build()));
 	}
-
 }
