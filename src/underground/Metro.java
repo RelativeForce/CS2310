@@ -150,8 +150,12 @@ public final class Metro {
 	public String outputAllStations() {
 		StringBuilder output = new StringBuilder();
 
-		// For each station add it to the output on a new line.
-		allStations.forEach(s -> output.append(s.getName()).append("\n"));
+		lines.forEach((lineName, line) -> {
+			
+			output.append(lineName).append(": ").append("");
+			
+		});
+
 		return output.toString();
 	}
 
@@ -218,7 +222,7 @@ public final class Metro {
 		// Whether the path contains 'a' already
 		boolean containsA = false;
 
-		// Whether the path contains 'a' already
+		// Whether the path contains 'b' already
 		boolean containsB = false;
 
 		/**
@@ -241,18 +245,18 @@ public final class Metro {
 			// Whether the path contains 'a' AND 'b'
 			final boolean containsAandB = containsA && containsB;
 
-			// If both stations are in the path stop iterating over 
-			if(containsAandB) {
+			// If both stations are in the path stop iterating through the stations
+			if (containsAandB) {
 				break;
 			}
-			
+
 			/*
-			 * If the current station is 'a' or 'b' OR the the path contains 'a' or 'b' but
-			 * NOT both, add the current station to the path.
+			 * If the current station is 'a' or 'b' OR the the path contains 'a' or 'b' add
+			 * the current station to the path.
 			 */
 			if (containsAorB || isAorB) {
 
-				// Set the contains variables if the current station is A or B
+				// Set the contains variables if the current station is 'a' or 'b'
 				if (isA) {
 					containsA = true;
 				} else if (isB) {
@@ -399,8 +403,7 @@ public final class Metro {
 		LinkedList<Station> reversePath = new LinkedList<>();
 
 		/*
-		 * Remove the last element from the path and add it to the back of the reversed
-		 * path
+		 * Remove the last element from the path and add it to the reversed path
 		 */
 		while (!path.isEmpty()) {
 			reversePath.add(path.removeLast());
@@ -408,6 +411,5 @@ public final class Metro {
 
 		return reversePath;
 	}
-	
-	
+
 }
