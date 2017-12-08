@@ -1,6 +1,6 @@
 package underground;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Performs a set of predefined tests on the the {@link Metro}.
@@ -32,7 +32,7 @@ class Test_Metro {
 	 * 
 	 * @throws Exception
 	 */
-	@BeforeEach
+	@Before
 	public void setUp() throws Exception {
 		data = new Sample();
 	}
