@@ -151,9 +151,9 @@ public final class Metro {
 		StringBuilder output = new StringBuilder();
 
 		lines.forEach((lineName, line) -> {
-			
+
 			output.append(lineName).append(": ").append("");
-			
+
 		});
 
 		return output.toString();
@@ -208,67 +208,58 @@ public final class Metro {
 	 * 
 	 * @param line
 	 *            {@link Line} both {@link Station}s are on.
-	 * @param a
+	 * @param start
 	 *            {@link Station} A
-	 * @param b
+	 * @param end
 	 *            {@link Station} b
 	 * @return {@link Queue} path between the two stations.
 	 */
-	private LinkedList<Station> getPathOnLine(Line line, Station a, Station b) {
+	private LinkedList<Station> getPathOnLine(Line line, Station start, Station end) {
 
 		// The path between the two stations
 		LinkedList<Station> path = new LinkedList<>();
 
-		// Whether the path contains 'a' already
-		boolean containsA = false;
+		// Whether the path contains 'start' already
+		boolean containsStart = false;
 
-		// Whether the path contains 'b' already
-		boolean containsB = false;
+		// Whether the path contains 'end' already
+		boolean containsEnd = false;
 
 		/**
-		 * Adds all the stations between 'a' and 'b' to the path
+		 * Adds all the stations between 'start' and 'end' to the path
 		 */
 		for (Station station : line.getStations()) {
 
-			// Whether the current station is 'a'
-			final boolean isA = station.equals(a);
+			// Whether the current station is 'start'
+			final boolean isStart = station.equals(start);
 
-			// Whether the current station is 'b'
-			final boolean isB = station.equals(b);
-
-			// Whether the current station is 'a' or 'b'
-			final boolean isAorB = isA || isB;
-
-			// Whether the path contains 'a' OR 'b'
-			final boolean containsAorB = containsA || containsB;
-
-			// Whether the path contains 'a' AND 'b'
-			final boolean containsAandB = containsA && containsB;
+			// Whether the current station is 'end'
+			final boolean isEnd = station.equals(end);
 
 			// If both stations are in the path stop iterating through the stations
-			if (containsAandB) {
+			if (containsStart && containsEnd) {
 				break;
 			}
 
 			/*
-			 * If the current station is 'a' or 'b' OR the the path contains 'a' or 'b' add
-			 * the current station to the path.
+			 * If the current station is 'start' or 'end' OR the the path contains 'start' or
+			 * 'end' add the current station to the path.
 			 */
-			if (containsAorB || isAorB) {
+			if (containsStart || containsEnd || isStart || isEnd) {
 
-				// Set the contains variables if the current station is 'a' or 'b'
-				if (isA) {
-					containsA = true;
-				} else if (isB) {
-					containsB = true;
+				// Set the contains variables if the current station is 'start' or 'end'
+				if (isStart) {
+					containsStart = true;
+				} else if (isEnd) {
+					containsEnd = true;
 				}
 				path.add(station);
 			}
 
 		}
 
-		// If b is at the start of the path. Reverse the path.
-		if (path.peek().equals(b)) {
+		// If 'end' is at the start of the path. Reverse the path.
+		if (path.peek().equals(end)) {
 			return reversePath(path);
 		}
 
