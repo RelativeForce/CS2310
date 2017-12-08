@@ -156,6 +156,16 @@ public class LineTest
 		assertEquals(MOCK_LINE_NAME_A, MOCK_LINE_A.getName());
 	}
 	@Test
+	public final void testFirstTerminal()
+	{
+		fail();
+	}
+	@Test
+	public final void testLastTerminal()
+	{
+		fail();
+	}
+	@Test
 	public final void testGetStations_Empty()
 	{
 		assertTrue(NON_EXISTING_LINE.getStations().isEmpty());
