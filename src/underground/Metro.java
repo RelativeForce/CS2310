@@ -150,11 +150,9 @@ public final class Metro {
 	public String outputAllStations() {
 		StringBuilder output = new StringBuilder();
 
-		lines.forEach((lineName, line) -> {
-
-			output.append(lineName).append(": ").append("");
-
-		});
+		// Add each line to the output 
+		lines.forEach((lineName, line) -> output.append(lineName).append(": ").append(line.firstTerminal().getName())
+				.append(" <--> ").append(line.lastTerminal().getName()).append("\n"));
 
 		return output.toString();
 	}
@@ -242,8 +240,8 @@ public final class Metro {
 			}
 
 			/*
-			 * If the current station is 'start' or 'end' OR the the path contains 'start' or
-			 * 'end' add the current station to the path.
+			 * If the current station is 'start' or 'end' OR the the path contains 'start'
+			 * or 'end' add the current station to the path.
 			 */
 			if (containsStart || containsEnd || isStart || isEnd) {
 
