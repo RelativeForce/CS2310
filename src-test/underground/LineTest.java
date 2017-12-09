@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
@@ -20,8 +21,17 @@ public class LineTest
 {
 	//========================================================================
 	//Static fields.
+	/**
+	 * A {@link String} representing the name of a {@link Station} object.
+	 */
 	private static final String STATION_NAME_A = "Station A";
+	/**
+	 * A {@link String} representing the name of a {@link Station} object.
+	 */
 	private static final String STATION_NAME_B = "Station B";
+	/**
+	 * A {@link String} representing the name of a {@link Station} object.
+	 */
 	private static final String STATION_NAME_C = "Station C";
 	private static final Station STATION_A = new Station(STATION_NAME_A);
 	private static final Station STATION_B = new Station(STATION_NAME_B);
@@ -193,7 +203,7 @@ public class LineTest
 	@Test
 	public final void testGetAdjacent_Contains()
 	{
-		
+		assertTrue(MOCK_LINE_A.getAdjacentLineNames().contains(MOCK_LINE_B));
 	}
 	@Test(expected = NullPointerException.class)
 	public final void testGetIntersectionOf_NullArg()
@@ -213,12 +223,12 @@ public class LineTest
 	@Test
 	public final void testEquals_NullArg()
 	{
-		
+		assertFalse(MOCK_LINE_A.equals(null));
 	}
 	@Test
 	public final void testEquals_DifferentType()
 	{
-		
+		assertFalse(MOCK_LINE_A.equals(new Object()));
 	}
 	@Test
 	public final void testEquals_NotEqual()
@@ -233,21 +243,39 @@ public class LineTest
 	@Test
 	public final void testHashCode_NotEqual()
 	{
-		
+		assertNotEquals(MOCK_LINE_A.hashCode(), MOCK_LINE_B.hashCode());
 	}
 	@Test
 	public final void testHashCode_Equal()
 	{
-		
+		assertEquals(MOCK_LINE_A, setupMockLine());
 	}
 	@Test
 	public final void testToString_Empty()
 	{
-		
+		assertFalse(MOCK_LINE_A.toString().contains(STATION_NAME_A));
 	}
 	@Test
 	public final void testToString_NotEmpty()
 	{
-		
+		assertTrue(MOCK_LINE_A.toString().contains(STATION_NAME_A));
+	}
+	//=========================================================================
+	//Methods.
+	/**
+	 * A helper method for generating a {@link Line} object which is equal
+	 * to {@link #MOCK_LINE_A} but does not have reference equality.
+	 * 
+	 * @return The {@link Line} which is equal to {@link #MOCK_LINE_A}.
+	 */
+	private final Line setupMockLine()
+	{
+		final Map<String, Set<Station>> intersections = new HashMap<>();
+		final Set<Station> stations = new LinkedHashSet<>();
+		intersections.put(MOCK_LINE_NAME_B, new HashSet<>());
+		intersections.get(MOCK_LINE_A).add(STATION_B);
+		stations.add(STATION_A);
+		stations.add(STATION_B);
+		return new Line(MOCK_LINE_NAME_A, stations, intersections);
 	}
 }
