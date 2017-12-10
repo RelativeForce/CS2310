@@ -40,6 +40,34 @@ public class Line {
 	 */
 	private static final String NO_STATION_MESSAGE =
 			"A line must have at least one station";
+	/**
+	 * The {@link String} representing the error message for when attempting to
+	 * use a <code>null</code> value as a {@link Station} object.
+	 */
+	private static final String NULL_STATION_MESSAGE =
+			"Station argument was null, and null is not a valid station.";
+	/**
+	 * The {@link String} representing the error message for when a
+	 * {@code Line} is created with a <code>null<code> argument as a name.
+	 */
+	private static final String NULL_NAME =
+			"String argument representing the Line name was null, and a Line"
+			+ "canot have null as a name.";
+	/**
+	 * The {@link String} representing the error message for when a
+	 * {@code Line} is created with a <code>null<code> argument as a
+	 * {@link Set}.
+	 */
+	private static final String NULL_STATION_SET =
+			"The Set of Station objects in a Line cannot be null.";
+	/**
+	 * The {@link String} representing the error message for when a
+	 * {@code Line} is created with a <code>null<code> argument as a
+	 * {@link Map}.
+	 */
+	private static final String NULL_ADJACENT_LINES =
+			"The Map representing afjacent lines and shared stations cannot"
+			+ "be null";
 	//=========================================================================
 	//Fields.
 	/**
@@ -101,6 +129,12 @@ public class Line {
 			Set<Station> stations,
 			Map<String, Set<Station>> adjasentLines)
 	{
+		if(name == null)
+			throw new NullPointerException(NULL_NAME);
+		if(stations == null)
+			throw new NullPointerException(NULL_STATION_SET);
+		if(adjasentLines == null)
+			throw new NullPointerException(NULL_ADJACENT_LINES);
 		if(stations.isEmpty())
 			throw new IllegalArgumentException(NO_STATION_MESSAGE);
 		this.name = name;
@@ -146,6 +180,8 @@ public class Line {
 	 */
 	public boolean contains(Station station)
 	{
+		if(station == null)
+			throw new NullPointerException();
 		return stations.contains(station);
 	}
 	/**
@@ -215,7 +251,11 @@ public class Line {
 	 */
 	public final Set<Station> getIntersectingStationsOf(final String lineName)
 	{
-		return Collections.unmodifiableSet(adjacentLines.get(lineName));
+		if(lineName == null)
+			throw new NullPointerException(NULL_NAME);
+		if(adjacentLines.containsKey(lineName))
+			return Collections.unmodifiableSet(adjacentLines.get(lineName));
+		return Collections.emptySet();
 	}
 	//=========================================================================
 	//Overriden methods.
@@ -258,7 +298,6 @@ public class Line {
 	@Override
 	public final int hashCode()
 	{
-		//TODO improve hash to be constant time.
 		return name.hashCode() ^ stations.size() ^ adjacentLines.size();
 	}
 	/**
