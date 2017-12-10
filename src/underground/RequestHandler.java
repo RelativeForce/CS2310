@@ -44,7 +44,7 @@ public class RequestHandler implements Controller{
 	public String listStationsInLine(String line) {
 		try{
 		StringBuilder sb = new StringBuilder();
-		metro.listStationsOnLine(line).forEach(linename ->sb.append(linename.getName()).append("\n"));
+		metro.listStationsOnLine(line).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));
 		
 		return sb.toString();
 		}
@@ -66,7 +66,7 @@ public class RequestHandler implements Controller{
 	public String listAllDirectlyConnectedLines(String line) {
 		try {
 		StringBuilder sb = new StringBuilder();
-		metro.getAdjacentLines(line).forEach(linename ->sb.append(linename.getName()).append("\n"));
+		metro.getAdjacentLines(line).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));
 		
 		return sb.toString();
 		}
@@ -89,9 +89,12 @@ public class RequestHandler implements Controller{
 	 */			
 	public String showPathBetween(String stationA, String stationB) {
 		try{
+			StringBuilder sb = new StringBuilder();
 	Station	statA = new Station(stationA);
 	Station	statB = new Station(stationB);	
-	return metro.findPath(statA, statB).toString();
+	metro.findPath(statA, statB).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));;
+	//return metro.findPath(statA, statB).toString();	
+	return sb.toString();
 		}
 		catch(Exception e){
 		return e.getMessage();
