@@ -12,11 +12,10 @@ import java.util.Stack;
 
 /**
  * This encapsulates the behaviours of the Metro which is a system of
- * interconnected @{@link Line}s containing a set of {@link Station}s.
+ * interconnected {@link Line}s containing a set of {@link Station}s.
  * 
  * @author Joshua_Eddy 159029448
- * @author John_Berg #########
- * @auhor David_Wightman 159102257
+ * @author John_Berg 159014260
  *
  */
 public final class Metro {
@@ -48,33 +47,18 @@ public final class Metro {
 	 */
 	public Metro(Map<String, Line> lines) {
 
+		this.lines = lines;
+
 		// The set of stations that will be used to construct allStations
 		final Set<Station> stations = new HashSet<>();
 
 		// The map of associations between stations and their lines.
 		final Map<Station, Set<Line>> stationToLine = new HashMap<>();
 
-		// Iterate through each line in the parameter line map.
-		lines.forEach((lineName, line) -> {
+		// Process the lines into the stations
+		parseLines(lines, stations, stationToLine);
 
-			// Add all the stations on that line to the set of all stations.
-			final Set<Station> stationsInLine = line.getStations();
-			stations.addAll(stationsInLine);
-
-			// Iterate through all the stations on the current line and add an association
-			// for from the station back to its parent line(s).
-			stationsInLine.forEach(station -> {
-
-				if (!stationToLine.containsKey(station)) {
-					stationToLine.put(station, new HashSet<>());
-				}
-
-				stationToLine.get(station).add(line);
-
-			});
-		});
-
-		this.lines = lines;
+		// Set the fields as unmodifiable.
 		this.stationLineLookUp = Collections.unmodifiableMap(stationToLine);
 		this.allStations = Collections.unmodifiableSet(stations);
 
@@ -113,10 +97,10 @@ public final class Metro {
 		Line startLine = stationLineLookUp.get(start).iterator().next();
 
 		// If there is a line path get the path
-		if (searchAdjacent(linePath, traversed, startLine, end)) {
+		if (searchAdjacentLine(linePath, traversed, startLine, end)) {
 
 			// Return the path
-			return configurePath(linePath, start, end);
+			return buildPath(linePath, start, end);
 		}
 
 		return null;
@@ -150,7 +134,7 @@ public final class Metro {
 	public String outputAllStations() {
 		StringBuilder output = new StringBuilder();
 
-		// Add each line to the output 
+		// Add each line to the output
 		lines.forEach((lineName, line) -> output.append(lineName).append(": ").append(line.firstTerminal().getName())
 				.append(" <--> ").append(line.lastTerminal().getName()).append("\n"));
 
@@ -201,6 +185,42 @@ public final class Metro {
 	}
 
 	/**
+	 * Processes the specified {@link Map} of {@link Line}s into the specified
+	 * {@link Set} of {@link Station}s and {@link Map} of {@link Station}s to the
+	 * {@link Line}s they are on.
+	 * 
+	 * @param lines
+	 *            {@link Map} of {@link Line}s
+	 * @param stations
+	 *            {@link Set} of {@link Station}s
+	 * @param stationToLine
+	 *            {@link Map} of {@link Station}s to the {@link Line}s they are on.
+	 */
+	private void parseLines(final Map<String, Line> lines, final Set<Station> stations,
+			final Map<Station, Set<Line>> stationToLine) {
+
+		// Iterate through each line in the parameter line map.
+		lines.forEach((lineName, line) -> {
+
+			// Add all the stations on that line to the set of all stations.
+			final Set<Station> stationsInLine = line.getStations();
+			stations.addAll(stationsInLine);
+
+			// Iterate through all the stations on the current line and add an association
+			// for from the station back to its parent line(s).
+			stationsInLine.forEach(station -> {
+
+				if (!stationToLine.containsKey(station)) {
+					stationToLine.put(station, new HashSet<>());
+				}
+
+				stationToLine.get(station).add(line);
+
+			});
+		});
+	}
+
+	/**
 	 * Retrieves the {@link Station}s along one {@link Line} until the common
 	 * {@link Station} is reached.
 	 * 
@@ -245,12 +265,16 @@ public final class Metro {
 			 */
 			if (containsStart || containsEnd || isStart || isEnd) {
 
-				// Set the contains variables if the current station is 'start' or 'end'
+				// If the current station is 'start' then the path contains the start station.
 				if (isStart) {
 					containsStart = true;
-				} else if (isEnd) {
+				}
+
+				// If the current station is 'end' then path contains the end station.
+				if (isEnd) {
 					containsEnd = true;
 				}
+
 				path.add(station);
 			}
 
@@ -266,8 +290,8 @@ public final class Metro {
 
 	/**
 	 * Converts the path created by the DFS
-	 * {@link Metro#searchAdjacent(Stack, Set, Line, Station)} into a {@link List}
-	 * of {@link Station}s.
+	 * {@link Metro#searchAdjacentLine(Stack, Set, Line, Station)} into a
+	 * {@link List} of {@link Station}s.
 	 * 
 	 * @param linePath
 	 *            The {@link Stack} of {@link Line}s that are on the path from the
@@ -278,10 +302,10 @@ public final class Metro {
 	 *            {@link Station}
 	 * @return {@link List} of {@link Station}s representing the path.
 	 */
-	private List<Station> configurePath(Stack<Line> linePath, Station start, Station end) {
+	private List<Station> buildPath(Stack<Line> linePath, Station start, Station end) {
 
 		// Holds the full path from the start station to the end station.
-		LinkedList<Station> fullPath = new LinkedList<>();
+		final LinkedList<Station> fullPath = new LinkedList<>();
 
 		Station previousStationNode = start;
 		Station nextStationNode = null;
@@ -299,7 +323,7 @@ public final class Metro {
 
 				// Get the path along the previous line from the previous node to the current
 				// node.
-				LinkedList<Station> path = getPathOnLine(previousLine, previousStationNode, nextStationNode);
+				final LinkedList<Station> path = getPathOnLine(previousLine, previousStationNode, nextStationNode);
 
 				// Remove the station that will start the next leg of the full path along the
 				// current line.
@@ -334,27 +358,31 @@ public final class Metro {
 	 *            The target {@link Station} that this DFS is attempting to find.
 	 * @return Whether a path was found or not.
 	 */
-	private boolean searchAdjacent(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
+	private boolean searchAdjacentLine(Stack<Line> linePath, Set<Line> traversed, Line current, Station target) {
 
+		// Add this line to the path and set it as traversed.
 		linePath.push(current);
 		traversed.add(current);
 
-		// If the target station is on the current line.
+		/*
+		 * If the target station is on the current line a path has been found. A base
+		 * case for this recursive algorithm.
+		 */
 		if (current.contains(target)) {
 			return true;
 		}
 
 		final Set<Line> validLines = new HashSet<>();
-
-		final Set<Line> currentLines = getAdjacentLines(current);
-
+		final Set<Line> adjacentLines = getAdjacentLines(current);
 		final Set<Line> targetLines = stationLineLookUp.get(target);
 
-		// Check if the line is part of the current
-		for (Line line : currentLines) {
+		// Check if any of the current adjacent lines are a target line.
+		for (Line line : adjacentLines) {
 
-			// If the set of lines connected to the target station then add the line to the
-			// line path as it line
+			/*
+			 * If the set of lines connected to the target station then add the line to the
+			 * line path as it line. A base case for this recursive algorithm.
+			 */
 			if (targetLines.contains(line)) {
 				linePath.push(line);
 				return true;
@@ -370,12 +398,13 @@ public final class Metro {
 		// Iterate through each valid child line. Return true if a path is found using a
 		// child line.
 		for (Line line : validLines) {
-			if (searchAdjacent(linePath, traversed, line, target)) {
+			if (searchAdjacentLine(linePath, traversed, line, target)) {
 				return true;
 			}
 		}
 
-		// If there are no valid child lines then return to parent line.
+		// If there are no valid child lines then remove this line from the line path
+		// and return to parent line.
 		linePath.pop();
 		return false;
 	}
@@ -389,16 +418,16 @@ public final class Metro {
 	 */
 	private LinkedList<Station> reversePath(LinkedList<Station> path) {
 
-		LinkedList<Station> reversePath = new LinkedList<>();
+		LinkedList<Station> reversedPath = new LinkedList<>();
 
 		/*
 		 * Remove the last element from the path and add it to the reversed path
 		 */
 		while (!path.isEmpty()) {
-			reversePath.add(path.removeLast());
+			reversedPath.add(path.removeLast());
 		}
 
-		return reversePath;
+		return reversedPath;
 	}
 
 }
