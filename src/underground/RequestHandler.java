@@ -83,6 +83,7 @@ public class RequestHandler implements Controller{
 	public String listAllDirectlyConnectedLines(String line) {
 		try {
 		StringBuilder sb = new StringBuilder();
+		sb.append(line).append("\n").append("\t");
 		metro.getAdjacentLines(line).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));
 		
 		return sb.toString();
