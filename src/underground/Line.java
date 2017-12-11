@@ -181,7 +181,7 @@ public class Line {
 	public boolean contains(Station station)
 	{
 		if(station == null)
-			throw new NullPointerException();
+			throw new NullPointerException(NULL_STATION_MESSAGE);
 		return stations.contains(station);
 	}
 	/**
