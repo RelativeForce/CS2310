@@ -1,5 +1,8 @@
 package underground;
 
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * This class provides concrete implementation for the @{link Controller} by
  * instancing the @{link Metro} and calling its methods.
@@ -43,8 +46,22 @@ public class RequestHandler implements Controller{
 	 */
 	public String listStationsInLine(String line) {
 		try{
+		List<Station> stations = metro.listStationsOnLine(line);
+		Iterator<Station> itr = stations.iterator();
 		StringBuilder sb = new StringBuilder();
-		metro.listStationsOnLine(line).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));
+		sb.append(line).append(" : ");
+		
+		while (itr.hasNext()){
+			Station tmp = itr.next();
+			sb.append(tmp.getName()).append(" <-> ");
+			
+		}
+		if (itr.hasNext() == false){
+			sb.setLength(sb.length() - 5);
+		}
+		
+		
+		
 		
 		return sb.toString();
 		}
@@ -89,11 +106,23 @@ public class RequestHandler implements Controller{
 	 */			
 	public String showPathBetween(String stationA, String stationB) {
 		try{
+			
+			
 			StringBuilder sb = new StringBuilder();
-	Station	statA = new Station(stationA);
-	Station	statB = new Station(stationB);	
-	metro.findPath(statA, statB).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));;
-	//return metro.findPath(statA, statB).toString();	
+			Station	statA = new Station(stationA);
+			Station	statB = new Station(stationB);
+			List<Station> stations = metro.findPath(statA, statB);
+			Iterator<Station> itr = stations.iterator();
+			while (itr.hasNext()){
+				Station tmp = itr.next();
+				sb.append(tmp.getName()).append(" -> ");
+				
+			}
+			if (itr.hasNext() == false){
+				sb.setLength(sb.length() - 4);
+			}
+			
+		
 	return sb.toString();
 		}
 		catch(Exception e){
