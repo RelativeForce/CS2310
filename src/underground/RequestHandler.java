@@ -7,7 +7,6 @@ import java.util.List;
  * instancing the @{link Metro} and calling its methods.
  * 
  * @author David_Wightman 159102257
- * @author Joshua_Eddy 159029448
  *
  */
 public class RequestHandler implements Controller {
