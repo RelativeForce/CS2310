@@ -46,24 +46,20 @@ public class RequestHandler implements Controller{
 	 */
 	public String listStationsInLine(String line) {
 		try{
-		List<Station> stations = metro.listStationsOnLine(line);
-		Iterator<Station> itr = stations.iterator();
-		StringBuilder sb = new StringBuilder();
-		sb.append(line).append(" : ");
-		
-		while (itr.hasNext()){
-			Station tmp = itr.next();
-			sb.append(tmp.getName()).append(" <-> ");
+			List<Station> stations = metro.listStationsOnLine(line);
+			Iterator<Station> itr = stations.iterator();
+			StringBuilder sb = new StringBuilder();
+			sb.append(line).append(" : ");
 			
-		}
-		if (itr.hasNext() == false){
-			sb.setLength(sb.length() - 5);
-		}
-		
-		
-		
-		
-		return sb.toString();
+			while (itr.hasNext()){
+				Station tmp = itr.next();
+				sb.append(tmp.getName()).append(" <-> ");
+				
+			}
+			if (itr.hasNext() == false){
+				sb.setLength(sb.length() - 5);
+			}
+			return sb.toString();
 		}
 		catch(Exception e) {
 			return e.getMessage();
@@ -82,11 +78,11 @@ public class RequestHandler implements Controller{
 	 */
 	public String listAllDirectlyConnectedLines(String line) {
 		try {
-		StringBuilder sb = new StringBuilder();
-		sb.append(line).append("\n").append("\t");
-		metro.getAdjacentLines(line).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));
+			StringBuilder sb = new StringBuilder();
+			sb.append(line).append("\n").append("\t");
+			metro.getAdjacentLines(line).forEach(linename ->sb.append(linename.getName()).append("\n").append("\t"));
 		
-		return sb.toString();
+			return sb.toString();
 		}
 		catch (Exception e) {
 			return e.getMessage();
@@ -119,18 +115,12 @@ public class RequestHandler implements Controller{
 				sb.append(tmp.getName()).append(" -> ");
 				
 			}
-			if (itr.hasNext() == false){
-				sb.setLength(sb.length() - 4);
-			}
-			
-		
-	return sb.toString();
+			sb.setLength(sb.length() - 4);
+			return sb.toString();
 		}
 		catch(Exception e){
-		return e.getMessage();
+			return e.getMessage();
 		}
-		
-		 
 	}
 
 }
